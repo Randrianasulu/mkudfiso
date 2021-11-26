@@ -1,0 +1,90 @@
+mkudfiso (Blu-ray authoring tool set), a utility to create ISO images containing
+a pure UDF filesystem, intended primarily for Blu-ray authoring but can be used
+for any purpose (including CD-R and DVD-R). This tool can be used to author individual
+files larger than 4GB, which is a requirement for Blu-ray and other high-definition
+formats.
+
+THIS TOOL DOES NOT GENERATE ISO 9660 STRUCTURES. Use "mkisofs" if you want ISO 9660,
+Joliet, Rock Ridge, etc. in the structure. This is a pure UDF generator.
+
+This tool is released under the GNU General Public License for personal, noncommercial
+use only. For commercial use please contact jonathan@impactstudiopro.com for commercial licensing.
+
+(C) 2007 Impact Studio Pro LLC. Written by Jonathan Campbell.
+
+This software is in beta and is provided without any warranty.
+It may have some serious bugs that have not been ironed out yet.
+
+===================== compiling ================================
+
+In the top directory (the one with this README file) use the
+./configure script to set up all the makefiles. Or, if GNU
+autoconf and automake are installed, use ./cleanup.sh to
+clean out the source tree and rebuild the ./configure script.
+
+Then type "make" followed by "make install".
+
+This installs "mkudfiso" into /usr/bin or whatever --prefix
+you specified.
+
+Compilation requires:
+  * GCC 4.x (may compile with 3.x, never tried it)
+  * C++ standard template libraries
+
+==================== what it does ==============================
+
+This program masters an ISO image that can be burned to CD, DVD,
+or HD-DVD/Blu-ray. Like mkisofs this takes a specific directory
+and uses it's contents to generate the ISO.
+
+The structures generated are (should be?) UDF v1.02 compliant.
+
+Motivations for writing this:
+  * I need a pure UDF filesystem for Blu-ray authoring
+  * The stupid 4GB per-file limit in mkisofs
+  * Learning experience to better understand the ECMA-167 and OSTA standards
+
+============ compatibility and known issues ========================
+
+The output of this program so far has been tested with several systems and configurations.
+Some issues have come up, but overall the contents are intact.
+
+  * Mac OS X (10.4.8, PowerPC PowerBook G4)
+    All files and folders show up properly. However, it seems this program's output
+    eventually triggers a bug in the Mach kernel that causes a hard crash (bringing up
+    the "you need to hold the power button down for 5 seconds" message)
+
+  * Windows XP
+    No problems seen so far.
+ 
+  * Linux UDF driver (2.6.18.2)
+    All files and folders show up properly. However, there seems to be a minor issue with
+    certain commands (like "find") that prevents a recursive directory search from happening.
+
+============ runtime options ========================================
+
+In addition to creating an ISO, this program offers several features that can be used
+for data recovery and verification. These are enabled through options on the command
+line.
+
+  --limit <size>
+    Fail and error out if the ISO image would exceed this size. This can be used by data backup
+    scripts and bluray authoring software alike to ensure that the ISO image will never exceed
+    the capacity of a disc. Inspired by the ISO size guessing game that I often had to play when
+    using mkisofs, often where many small files + the UDF and ISO structures to represent them
+    would unexpectedly exceed the capacity of a DVD-R.
+
+  --hashes <file>
+    Generate a list of hashes for each file written to the ISO, as well as a hash of the entire
+    ISO image. The list is written to the file you specify here. Unless no room is available
+    (according to the --limit switch) this file is also appended to the end of the ISO image
+    as an Implementation Use UDF descriptor that data recovery software can easily find.
+    The hashes are written in hexadecimal in the form MD5/SHA-1/SHA-256.
+
+  --report <file>
+    Generate a list of the files archived in the ISO image and their corresponding locations
+    in the ISO image. The files are never fragmented, so the locations are shown in the form
+    of a starting and ending sector number (inclusive range, as in "start <= x <= end"). If
+    room is available (according to --limit) this list is also appended to the end of the ISO
+    as an Implementation Use UDF descriptor for data recovery purposes.
+
