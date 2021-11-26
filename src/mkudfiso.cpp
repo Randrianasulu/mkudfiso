@@ -509,6 +509,7 @@ static int parse_args(int argc,char **argv) {
 				fprintf(stderr,"                   If space is available, the report is added to the ISO file\n");
 				fprintf(stderr,"  -force-iso       Overwrite ISO file if it already exists\n");
 				fprintf(stderr,"  -sparse          Detect long runs of zero sectors and make the file sparse\n");
+                                fprintf(stderr,"  -o filename      Output filename\n") ;
 				fprintf(stderr,"  -v <label>       Set volume label\n");
 				return 0;
 			}
